@@ -1,2 +1,8 @@
 # x3log
-# kyx
+* hosting @justxbird @github
+* hosting @cute.undo.it @web @freedns.afraid.org
+* previously freak onFirst
+* previously vsxi onSecond
+* previously xcez onThird
+* currently kyx onForth
+* x username cutestx3
