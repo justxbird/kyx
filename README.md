@@ -6,3 +6,4 @@
 * previously xcez onThird
 * currently kyx onForth
 * x username cutestx3
+* deleted x3log
