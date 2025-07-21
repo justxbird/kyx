@@ -7,3 +7,4 @@
 * currently kyx onForth
 * x username cutestx3
 * deleted x3log
+* continuing x3log from README.MD
