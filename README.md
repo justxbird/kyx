@@ -8,3 +8,4 @@
 * x username cutestx3
 * deleted x3log
 * continuing x3log from README.MD
+* this site got open sourced under gpl-3
