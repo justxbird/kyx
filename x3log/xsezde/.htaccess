@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+Redirect 302 /out http://100gigs.org
+Redirect 302 /lastdayschoolspeechbytanimul https://drive.google.com/file/d/1mGe_mMF8DAFx85Bk9adpjhG4E0Yepak7/view?t=28
+
+ErrorDocument 404 https://xsez.de/404
+ErrorDocument 400 https://xsez.de/404
+ErrorDocument 401 https://xsez.de/404
+ErrorDocument 403 https://xsez.de/404
+ErrorDocument 500 https://xsez.de/404
+ErrorDocument 503 https://xsez.de/404
+Redirect 302 /b https://account.box.com/login?redirect_url=%2F
