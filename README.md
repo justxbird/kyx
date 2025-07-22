@@ -2,7 +2,7 @@
 * github @justxbird
 * site @cute.undo.it
 * f: from
-* cute.undo.it f:freedns.afraid.com
+* cute.undo.it f:freedns.afraid.org
 * tc: title change
 * tc freak on1st
 * tc vsxi  on2nd
