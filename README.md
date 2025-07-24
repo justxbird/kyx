@@ -14,4 +14,6 @@
 * u: under
 * open sourced u:gpl-3
 * released x3log on [/x3log](/x3log)
-* 
+* connected to wayback machine by internet archive ([web.archive.org](https://web.archive.org/))
+* updated site 1st time using ai
+* used claude sonnet 4 for site generation (fully)
