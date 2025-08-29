@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editable Roadmap</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #000000; color: #e0e0e0; margin: 0; padding: 20px; }
+    #header { display: flex; align-items: center; margin-bottom: 20px; }
+    #itemCount { background: #2a2a2a; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+    #searchBar { background: #333; border: none; color: #e0e0e0; padding: 5px; border-radius: 5px; display: none; flex: 1; }
+    #roadmap { position: relative; padding-left: 40px; }
+    .line { position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: #444; }
+    .item { position: relative; margin: 15px 0; }
+    .circle { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 50%; cursor: pointer; }
+    .content { display: flex; justify-content: space-between; align-items: center; }
+    .text { flex: 1; padding: 5px; outline: none; }
+    .version { color: #0df; padding: 5px; outline: none; }
+    .add-item { margin-top: 10px; padding: 10px; background: #0df; border: none; color: white; cursor: pointer; border-radius: 5px; }
+    .add-item:hover { background: #45a049; }
+    #sortButton { margin-left: 10px; padding: 5px 10px; background: #333; border: none; color: #e0e0e0; cursor: pointer; border-radius: 5px; }
+    dialog { background: #2a2a2a; color: #e0e0e0; border: none; padding: 20px; border-radius: 10px; }
+    dialog select, dialog input { background: #333; color: #e0e0e0; border: none; padding: 5px; }
+    dialog button { background: #0df; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-right: 10px; }
+    dialog button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <div id="itemCount" onclick="toggleSearch()"></div>
+    <input id="searchBar" type="text" oninput="searchItems(this.value)" placeholder="Search...">
+    <button id="sortButton" onclick="reverseItems()">#</button>
+  </div>
+  <div id="roadmap"></div>
+  <button class="add-item" onclick="addItem()">Add New Item</button>
+
+  <dialog id="statusDialog">
+    <h3>Change Status</h3>
+    <select id="predefinedStatus">
+      <option value="">Select status</option>
+      <option value="Planned|#808080">Planned</option>
+      <option value="In Progress|#ffeb3b">In Progress</option>
+      <option value="Completed|#0df">Completed</option>
+      <option value="Custom">Custom</option>
+    </select>
+    <div id="customStatus" style="display:none; margin-top:10px;">
+      <label>Name: <input type="text" id="customName"></label><br>
+      <label>Color: <input type="color" id="customColor"></label>
+    </div>
+    <div style="margin-top:10px;">
+      <button onclick="saveStatus()">Save</button>
+      <button onclick="document.getElementById('statusDialog').close()">Cancel</button>
+    </div>
+  </dialog>
+
+  <script>
+    let items = [
+      { text: "Custom colors", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Yearly reminders", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Callouts in editor", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Migration to SQLite", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Export attachments with notes", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Custom title bar on desktop app", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "At rest encryption + app lock", version: "v3.0.0", statusName: "Completed", statusColor: "#0df" },
+      { text: "Full offline mode\nDownload all your data including attachments onto your device for 100% offline use.", version: "v3.0.14", statusName: "Completed", statusColor: "#0df" },
+      { text: "Better tabs\nThings like navigation inside a tab, opening the same note in multiple tabs, no more automatic new tabs, etc.", version: "v3.0.25", statusName: "Completed", statusColor: "#0df" }
+    ];
+    let filter = '';
+    let currentIndex = -1;
+
+    function renderRoadmap() {
+      const roadmap = document.getElementById('roadmap');
+      roadmap.innerHTML = '<div class="line"></div>';
+      items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="circle" style="background:${item.statusColor}" title="${item.statusName}" onclick="showMenu(${index})"></div>
+          <div class="content">
+            <span contenteditable="true" class="text" oninput="updateText(${index}, this.innerText)">${item.text}</span>
+            <span contenteditable="true" class="version" oninput="updateVersion(${index}, this.innerText)">${item.version}</span>
+          </div>
+        `;
+        roadmap.appendChild(div);
+      });
+      document.getElementById('itemCount').innerText = items.length;
+      if (filter) {
+        document.querySelectorAll('.item').forEach((div, idx) => {
+          if (!items[idx].text.toLowerCase().includes(filter)) {
+            div.style.display = 'none';
+          } else {
+            div.style.display = 'block';
+          }
+        });
+      }
+      // Adjust line height
+      const line = document.querySelector('.line');
+      const lastItem = document.querySelector('.item:last-child');
+      if (lastItem) {
+        line.style.height = `${lastItem.offsetTop + lastItem.offsetHeight / 2}px`;
+      }
+    }
+
+    function updateText(index, text) {
+      items[index].text = text;
+    }
+
+    function updateVersion(index, version) {
+      items[index].version = version;
+    }
+
+    function addItem() {
+      items.push({ text: "New feature", version: "v0.0.0", statusName: "Planned", statusColor: "#808080" });
+      renderRoadmap();
+    }
+
+    function toggleSearch() {
+      const sb = document.getElementById('searchBar');
+      sb.style.display = sb.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function searchItems(value) {
+      filter = value.toLowerCase();
+      renderRoadmap();
+    }
+
+    function reverseItems() {
+      items.reverse();
+      renderRoadmap();
+    }
+
+    function showMenu(index) {
+      currentIndex = index;
+      const dialog = document.getElementById('statusDialog');
+      document.getElementById('predefinedStatus').value = '';
+      document.getElementById('customStatus').style.display = 'none';
+      const currentName = items[index].statusName;
+      const currentColor = items[index].statusColor;
+      // Check if matches predefined
+      const select = document.getElementById('predefinedStatus');
+      let matched = false;
+      for (let option of select.options) {
+        if (option.value.startsWith(currentName + '|')) {
+          select.value = option.value;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        select.value = 'Custom';
+        document.getElementById('customStatus').style.display = 'block';
+        document.getElementById('customName').value = currentName;
+        document.getElementById('customColor').value = currentColor;
+      }
+      dialog.showModal();
+    }
+
+    document.getElementById('predefinedStatus').onchange = function() {
+      if (this.value === 'Custom') {
+        document.getElementById('customStatus').style.display = 'block';
+      } else {
+        document.getElementById('customStatus').style.display = 'none';
+      }
+    };
+
+    function saveStatus() {
+      const selectValue = document.getElementById('predefinedStatus').value;
+      let name, color;
+      if (selectValue === 'Custom') {
+        name = document.getElementById('customName').value;
+        color = document.getElementById('customColor').value;
+      } else if (selectValue) {
+        [name, color] = selectValue.split('|');
+      } else {
+        return;
+      }
+      if (name && color) {
+        items[currentIndex].statusName = name;
+        items[currentIndex].statusColor = color;
+        renderRoadmap();
+        document.getElementById('statusDialog').close();
+      }
+    }
+
+    renderRoadmap();
+  </script>
+</body>
+</html>
