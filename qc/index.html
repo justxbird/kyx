@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:#000;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.c{width:100%;max-width:400px}
+input{width:100%;padding:20px;border:none;border-radius:12px;font-size:18px;background:#1a1a1a;color:#fff;margin-bottom:30px}
+input:focus{outline:none;background:#222}
+input::placeholder{color:#666}
+.b{display:flex;justify-content:center;gap:30px}
+button{width:60px;height:60px;border:none;border-radius:50%;background:#1a1a1a;cursor:pointer;transition:all .3s;font-size:28px}
+button:hover{background:#333;transform:scale(1.1)}
+button:active{transform:scale(.95)}
+@media(max-width:480px){button{width:50px;height:50px;font-size:24px}}
+</style>
+</head>
+<body>
+<div class="c">
+<input type="tel" id="p" placeholder="num">
+<div class="b">
+<button onclick="o('wa.me')">W</button>
+<button onclick="o('t.me')">T</button>
+<button onclick="o('signal.me/#p')">S</button>
+</div>
+</div>
+<script>
+const i=document.getElementById('p');
+function o(u){const v=i.value;if(!v)return;const c=v.replace(/[^0-9+]/g,'');window.open(`https://${u}/${c}`,'_blank')}
+i.addEventListener('keypress',e=>{if(e.key==='Enter')o('wa.me')});
+</script>
+</body>
+</html>
